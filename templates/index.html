@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>URL Shortener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>Shorten Your URL</h1>
+  <form method="POST">
+    <input type="url" name="long_url" placeholder="Enter long URL" required>
+    <input type="text" name="custom_slug" placeholder="Custom slug (optional)">
+    <button type="submit">Shorten</button>
+  </form>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul>
+        {% for category, message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  {% if short_url %}
+    <p>Your shortened URL: <a href="{{ url_for('redirect_short_url', short=short_url) }}" target="_blank">{{ request.host_url }}{{ short_url }}</a></p>
+    <img src="{{ url_for('static', filename='qr/' + short_url + '.png') }}" alt="QR Code">
+  {% endif %}
+
+  <p><a href="{{ url_for('login') }}">Login</a> | <a href="{{ url_for('register') }}">Register</a></p>
+</body>
+</html>

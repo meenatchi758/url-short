@@ -1,0 +1,60 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Your Shortened URLs</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label for="long_url">Enter URL to shorten:</label>
+        <input type="url" name="long_url" required placeholder="https://example.com">
+        <input type="text" name="custom_slug" placeholder="Custom slug (optional)">
+        <button type="submit">Shorten</button>
+    </form>
+
+    {% if urls %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Original URL</th>
+                    <th>Short URL</th>
+                    <th>QR Code</th>
+                    <th>Clicks</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for url in urls %}
+                <tr>
+                    <td><a href="{{ url.original_url }}" target="_blank">{{ url.original_url }}</a></td>
+                    <td><a href="{{ request.host_url }}{{ url.short }}" target="_blank">{{ request.host_url }}{{ url.short }}</a></td>
+                    <td><img src="{{ url_for('static', filename='qr/' + url.short + '.png') }}" alt="QR Code" width="60"></td>
+                    <td>{{ url.clicks|length }}</td>
+                    <td>{{ url.clicks[0].timestamp.strftime('%Y-%m-%d') if url.clicks else 'N/A' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No URLs created yet.</p>
+    {% endif %}
+
+    <a href="{{ url_for('logout') }}">Logout</a>
+
+    <footer>
+        <p>&copy; {{ datetime.utcnow().year }} URL Shortener App</p>
+    </footer>
+</body>
+</html>

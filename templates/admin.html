@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin</title>
+      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h2>Admin Panel - Manage URLs</h2>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Original URL</th>
+      <th>Short URL</th>
+      <th>User</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for url in urls %}
+    <tr>
+      <td>{{ url.id }}</td>
+      <td>{{ url.original_url }}</td>
+      <td>{{ request.host_url }}{{ url.short }}</td>
+      <td>{{ url.owner.username if url.owner else 'Unknown' }}</td>
+      <td>
+        <form method="POST" action="{{ url_for('delete_url', url_id=url.id) }}">
+          <button type="submit" onclick="return confirm('Delete this URL?')">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+</body>
+</html>
